@@ -25,7 +25,6 @@ class MovieListCell: UITableViewCell {
     // MARK: - Setup
     
     func setupView() {
-        safeArea = layoutMarginsGuide
         setupImageView()
         setupTitleLabel()
         setupDateLabel()
@@ -36,19 +35,26 @@ class MovieListCell: UITableViewCell {
         
         imageIV.contentMode = .scaleAspectFit
         imageIV.translatesAutoresizingMaskIntoConstraints = false
-        imageIV.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-        imageIV.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        imageIV.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        imageIV.heightAnchor.constraint(equalToConstant: 40).isActive = true
-//        imageIV.backgroundColor = .red
+        
+        NSLayoutConstraint.activate([
+            imageIV.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            imageIV.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            imageIV.widthAnchor.constraint(equalToConstant: 40),
+            imageIV.heightAnchor.constraint(equalToConstant: 40)
+        ])
+
     }
     
     func setupTitleLabel() {
         addSubview(titleLabel)
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.leadingAnchor.constraint(equalTo: imageIV.trailingAnchor, constant: 5).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: imageIV.trailingAnchor, constant: 5),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5)
+        ])
+
         
         titleLabel.font = UIFont(name: "Verdana-Bold", size: 16)
     }
@@ -57,8 +63,11 @@ class MovieListCell: UITableViewCell {
         addSubview(releaseDateLabel)
         
         releaseDateLabel.translatesAutoresizingMaskIntoConstraints = false
-        releaseDateLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor).isActive = true
-        releaseDateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            releaseDateLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            releaseDateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor)
+        ])
+
         releaseDateLabel.font = UIFont(name: "Verdana", size: 14)
     }
 }

@@ -16,7 +16,6 @@
 		AF5DA5412920160A009DE254 /* MovieListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5DA5402920160A009DE254 /* MovieListCell.swift */; };
 		AF5DA543292025B7009DE254 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5DA542292025B7009DE254 /* CustomImageView.swift */; };
 		AF5DA545292166BB009DE254 /* MovieDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5DA544292166BB009DE254 /* MovieDetailVC.swift */; };
-		AFCBD12529254F9D00F1B4BA /* TestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCBD12429254F9D00F1B4BA /* TestVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +30,6 @@
 		AF5DA5402920160A009DE254 /* MovieListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListCell.swift; sourceTree = "<group>"; };
 		AF5DA542292025B7009DE254 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		AF5DA544292166BB009DE254 /* MovieDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailVC.swift; sourceTree = "<group>"; };
-		AFCBD12429254F9D00F1B4BA /* TestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +68,6 @@
 				AF5DA5402920160A009DE254 /* MovieListCell.swift */,
 				AF5DA52E291F4141009DE254 /* MovieListVC.swift */,
 				AF5DA544292166BB009DE254 /* MovieDetailVC.swift */,
-				AFCBD12429254F9D00F1B4BA /* TestVC.swift */,
 				AF5DA542292025B7009DE254 /* CustomImageView.swift */,
 				AF5DA533291F4142009DE254 /* Assets.xcassets */,
 				AF5DA535291F4142009DE254 /* LaunchScreen.storyboard */,
@@ -149,7 +146,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AFCBD12529254F9D00F1B4BA /* TestVC.swift in Sources */,
 				AF5DA545292166BB009DE254 /* MovieDetailVC.swift in Sources */,
 				AF5DA5412920160A009DE254 /* MovieListCell.swift in Sources */,
 				AF5DA543292025B7009DE254 /* CustomImageView.swift in Sources */,

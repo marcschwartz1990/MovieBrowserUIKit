@@ -7,47 +7,47 @@
 
 import UIKit
 
-let imageCache = NSCache<AnyObject, AnyObject>()
+
 
 class CustomImageView: UIImageView {
     var task: URLSessionDataTask!
-    let spinner = UIActivityIndicatorView(style: .gray)
+    let spinner = UIActivityIndicatorView(style: .medium)
     
-    func loadImage(from url: URL) {
-        image = nil
-        
-        addSpinner()
-        
-        if let task = task {
-            task.cancel()
-        }
-        
-        if let imageFromCache = imageCache.object(forKey: url.absoluteString as AnyObject) as? UIImage {
-            image = imageFromCache
-            removeFromSuperview()
-            return
-        }
-        
-        task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            guard
-                let data = data,
-                let newImage = UIImage(data: data)
-            else {
-                print("Couldn't load image from url: \(url)")
-                return
-            }
-            
-            imageCache.setObject(newImage, forKey: url.absoluteString as AnyObject)
-            
-            DispatchQueue.main.async {
-                self.image = newImage
-                self.removeSpinner()
-            }
-        }
-        
-        task.resume()
-    }
+//    func loadImage(from url: URL) {
+//        image = nil
+//        
+//        addSpinner()
+//        
+//        if let task = task {
+//            task.cancel()
+//        }
+//        
+//        if let imageFromCache = imageCache.object(forKey: url.absoluteString as AnyObject) as? UIImage {
+//            image = imageFromCache
+//            removeFromSuperview()
+//            return
+//        }
+//        
+//        task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+//            
+//            guard
+//                let data = data,
+//                let newImage = UIImage(data: data)
+//            else {
+//                print("Couldn't load image from url: \(url)")
+//                return
+//            }
+//            
+//            imageCache.setObject(newImage, forKey: url.absoluteString as AnyObject)
+//            
+//            DispatchQueue.main.async {
+//                self.image = newImage
+//                self.removeSpinner()
+//            }
+//        }
+//        
+//        task.resume()
+//    }
     
     func addSpinner() {
         addSubview(spinner)

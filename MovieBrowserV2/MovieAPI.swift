@@ -5,13 +5,17 @@
 //  Created by Marc-Developer on 11/12/22.
 //
 
-import Foundation
+import UIKit
+protocol MovieManaging {
+    func getMovies(searchTerm: String, completion: @escaping (Result<[Movie], Error>) -> Void)
+}
 
-final class MovieAPI {
+final class MovieAPI: MovieManaging {
+    private let imageCache = NSCache<AnyObject, AnyObject>()
+    let session = URLSession.shared
+    var movies = [Movie]()
     
-    static let shared = MovieAPI()
-    
-    func getMovies(searchTerm: String, onCompletion: @escaping ([Movie]) -> ()) {
+    func getMovies(searchTerm: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.themoviedb.org"
@@ -23,27 +27,56 @@ final class MovieAPI {
         
         guard let url = components.url else {
             print("Invalid URL")
+            completion(.failure(URLError.invalidURL))
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { (data, resp, error) in
+        let task = session.dataTask(with: url) { (data, resp, error) in
             
             guard let data = data else {
                 print("data was nil")
+                completion(.failure(DecodingError.missingData))
                 return
             }
             
             guard let movieList = try? JSONDecoder().decode(MovieList.self, from: data) else {
                 print("Couldn't decode JSON.")
+                completion(.failure(DecodingError.decodingError))
                 return
             }
             
-            onCompletion(movieList.results)
+            completion(.success(movieList.results))
         }
         
         task.resume()
+        
+        movies.forEach { movie in
+            if let posterPath = movie.posterPath {
+                let url = URL(string: "https://image.tmdb.org/t/p/w500" + posterPath)
+                loadImage(from: url)
+            }
+        }
     }
     
+    func loadImage(from url: URL?) {
+        if let url = url {
+            
+            let task = session.dataTask(with: url) { (data, response, error) in
+                
+                guard
+                    let data = data,
+                    let newImage = UIImage(data: data)
+                else {
+                    print("Couldn't load image from url: \(url)")
+                    return
+                }
+                
+                self.imageCache.setObject(newImage, forKey: url.absoluteString as AnyObject)
+            }
+            
+            task.resume()
+        }
+    }
 }
 
 struct MovieList: Codable {
@@ -68,7 +101,12 @@ struct Movie: Codable {
     }
 }
 
+enum URLError: Error {
+    case invalidURL
+}
 
+enum DecodingError: Error {
+    case missingData
+    case decodingError
+}
 
-// https://www.youtube.com/watch?v=t8sYKkST1gs&list=PLJbKhtS4qyYR7WSqTs5V0B0xx3iH7_Iyo&index=2
-// Pickup from 12:30

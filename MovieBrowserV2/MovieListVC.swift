@@ -12,9 +12,16 @@ import UIKit
 class MovieListVC: UIViewController {
     let tableView = UITableView()
     let searchController = UISearchController(searchResultsController: nil)
-    var safeArea: UILayoutGuide!
-    var movieList = [Movie]()
+    var movieList = [Movie]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            
+        }
+    }
     var searchTerm = ""
+    let movieAPI: MovieManaging = MovieAPI()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,16 +30,17 @@ class MovieListVC: UIViewController {
         title = "Movie Search"
         navigationItem.searchController = searchController
         
-        safeArea = view.layoutMarginsGuide
-        tableView.dataSource = self
-        
+        // tableView.register relates to tableView.dequeReusableCell in cellForRowAt
         tableView.register(MovieListCell.self, forCellReuseIdentifier: "cellid")
+        tableView.dataSource = self
+        tableView.delegate = self
         
         setupNavigationView()
         setupTableView()
         
         searchController.searchBar.delegate = self
         searchController.searchBar.searchTextField.clearButtonMode = .whileEditing
+        searchController.searchBar.showsCancelButton = false
     }
     
     // MARK: - Setup View
@@ -45,21 +53,22 @@ class MovieListVC: UIViewController {
         // Always add the UIView first before setting constraints
         view.addSubview(tableView)
         
-        tableView.register(MovieListCell.self, forCellReuseIdentifier: "cellid")
-        tableView.dataSource = self
+
+
         //
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
     }
 }
     // MARK: - UITableViewDataSource
    
 extension MovieListVC: UITableViewDataSource {
-    
-    //MARK: - Table View
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movieList.count
@@ -69,20 +78,13 @@ extension MovieListVC: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellid", for: indexPath)
         let movie = movieList[indexPath.row]
         
+        // ask Sam about casting to different type... as?
         guard let movieListCell = cell as? MovieListCell else {
             return cell
         }
         
         movieListCell.titleLabel.text = movie.title
         movieListCell.releaseDateLabel.text = movie.releaseDate
-        
-        // There is a better way to unwrap posterPath where you can give the cell a placeholder.
-        
-        if movie.posterPath != nil {
-            if let url = URL(string: "https://image.tmdb.org/t/p/w500" + movie.posterPath!) {
-                movieListCell.imageIV.loadImage(from: url)
-            }
-        }
         
         return cell
     }
@@ -109,16 +111,37 @@ extension MovieListVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
         
-        // Perform action on search click
-        let fetchMovies = { (fetchedMovieList: [Movie]) in
-            DispatchQueue.main.async {
-                self.movieList = fetchedMovieList
-                self.tableView.reloadData()
+//        let fetchMovies = { (fetchedMovieList: [Movie]) in
+//            DispatchQueue.main.async {
+//                self.movieList = fetchedMovieList
+//                self.tableView.reloadData()
+//            }
+//        }
+        movieAPI.getMovies(searchTerm: searchTerm) { result in
+            switch result {
+            case .success(let movies):
+                print(movies)
+                self.movieList = movies
+            case .failure(let error):
+                print(error)
+                self.presentErrorAlert(error: error)
             }
+            
         }
-        MovieAPI.shared.getMovies(searchTerm: searchTerm, onCompletion: fetchMovies)
         print("Search Term: \(searchTerm)")
     }
+    
+    func presentErrorAlert(error: Error) {
+            let alertController = UIAlertController(
+                title: "Error fetching movie",
+                message: "\(error.localizedDescription)",
+                preferredStyle: .alert)
+            let soundsGoodAction = UIAlertAction(
+                title: "Ok",
+                style: .default)
+            alertController.addAction(soundsGoodAction)
+            present(alertController, animated: true)
+        }
 }
 
 
